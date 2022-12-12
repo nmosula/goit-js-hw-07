@@ -22,4 +22,33 @@ const markup = galleryItems.reduce((acc, {
 
 galleryList.insertAdjacentHTML('beforeend', markup);
 
+galleryList.addEventListener('click', onImgClick);
 
+function onImgClick(evt) {
+  evt.preventDefault();
+  
+  if (evt.target.nodeName !== 'IMG') {
+    return;
+  }
+
+  const imgOriginal = `<img src="${evt.target.dataset.source}" alt="${evt.target.alt}">`;
+  
+  const instance = basicLightbox.create(imgOriginal,
+    {
+      onShow: (instance) => {
+        document.addEventListener('keydown', onEscapeKeyDown);
+      },
+      onClose: (instance) => {
+        document.removeEventListener('keydown', onEscapeKeyDown);
+      },
+    });
+  
+  instance.show();
+
+  function onEscapeKeyDown(evt) {
+    if (evt.code !== 'Escape') {
+      return;
+    }
+    instance.close();
+  }
+};
